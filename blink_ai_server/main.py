@@ -55,13 +55,21 @@ class FaceClusteringService:
         try:
             self.face_model = insightface.app.FaceAnalysis()
             self.face_model.prepare(ctx_id=0, det_size=(640, 640))
-            print("InsightFace模型加载成功")
+            print("✓ InsightFace模型加载成功")
         except Exception as e:
             print(f"模型加载失败: {e}")
-            raise e
+            print("提示：如果是网络问题，请检查网络连接或使用代理")
+            print("模型文件需要从GitHub下载，请确保网络畅通")
+            # 不抛出异常，让服务继续运行但功能受限
+            self.face_model = None
+            print("⚠️  服务将在受限模式下运行（无法进行人脸检测）")
     
     def detect_and_extract_faces(self, image_path: str) -> List[Dict[str, Any]]:
         """检测并提取人脸特征"""
+        if self.face_model is None:
+            print("错误：InsightFace模型未加载，无法进行人脸检测")
+            return []
+            
         try:
             # 读取图像
             img = cv2.imread(image_path)
@@ -80,11 +88,11 @@ class FaceClusteringService:
                 bbox = face.bbox.tolist()
                 
                 # 获取置信度
-                confidence = face.det_score
+                confidence = float(face.det_score)
                 
                 results.append({
                     'face_id': i,
-                    'embedding': embedding,
+                    'embedding': embedding.tolist(),  # 转换为Python列表
                     'bbox': bbox,
                     'confidence': confidence
                 })
@@ -102,13 +110,14 @@ class FaceClusteringService:
         
         for face in faces:
             # 将numpy数组转换为二进制
-            embedding_blob = face['embedding'].tobytes()
+            embedding_array = np.array(face['embedding'], dtype=np.float32)
+            embedding_blob = embedding_array.tobytes()
             bbox_json = json.dumps(face['bbox'])
             
             cursor.execute('''
                 INSERT INTO face_features (image_path, face_id, embedding, bbox, confidence)
                 VALUES (?, ?, ?, ?, ?)
-            ''', (image_path, face['face_id'], embedding_blob, bbox_json, face['confidence']))
+            ''', (image_path, face['face_id'], embedding_blob, bbox_json, float(face['confidence'])))
         
         conn.commit()
         conn.close()
@@ -133,7 +142,7 @@ class FaceClusteringService:
                 'id': face_id,
                 'image_path': image_path,
                 'bbox': json.loads(bbox_json),
-                'confidence': confidence
+                'confidence': float(confidence)
             })
         
         conn.close()
@@ -158,10 +167,10 @@ class FaceClusteringService:
                     clusters[label] = []
                 
                 clusters[label].append({
-                    'face_id': ids[i],
+                    'face_id': int(ids[i]),
                     'image_path': metadata[i]['image_path'],
                     'bbox': metadata[i]['bbox'],
-                    'confidence': metadata[i]['confidence']
+                    'confidence': float(metadata[i]['confidence'])
                 })
             
             # 更新数据库中的聚类标签
@@ -230,10 +239,10 @@ class FaceClusteringService:
             for i, similarity in enumerate(similarities):
                 if similarity >= threshold:
                     similar_faces.append({
-                        'face_id': ids[i],
+                        'face_id': int(ids[i]),
                         'image_path': metadata[i]['image_path'],
                         'bbox': metadata[i]['bbox'],
-                        'confidence': metadata[i]['confidence'],
+                        'confidence': float(metadata[i]['confidence']),
                         'similarity': float(similarity)
                     })
             
@@ -278,9 +287,9 @@ async def detect_faces(file: UploadFile = File(...)):
             "face_count": len(faces),
             "faces": [
                 {
-                    "face_id": face['face_id'],
+                    "face_id": int(face['face_id']),
                     "bbox": face['bbox'],
-                    "confidence": face['confidence']
+                    "confidence": float(face['confidence'])
                 }
                 for face in faces
             ]
@@ -365,4 +374,4 @@ async def get_stats():
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8100)

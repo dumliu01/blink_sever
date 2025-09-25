@@ -43,7 +43,7 @@ def create_demo_images():
 
 def test_api_endpoints():
     """测试API端点"""
-    base_url = "http://localhost:8000"
+    base_url = "http://localhost:8100"
     
     print("=== 人脸识别聚类服务演示 ===\n")
     
