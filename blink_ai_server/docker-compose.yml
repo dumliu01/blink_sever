@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  face-clustering:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./face_clustering.db:/app/face_clustering.db
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
