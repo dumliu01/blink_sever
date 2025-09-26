@@ -1,0 +1,22 @@
+server:
+  port: 8080
+  mode: debug
+
+database:
+  dsn: "blink_core.db"
+
+redis:
+  addr: "localhost:6379"
+  password: ""
+  db: 0
+
+jwt:
+  secret: "your-secret-key-change-in-production"
+  expire_time: 3600
+
+ai:
+  ai_base_url: "http://localhost:8100"
+
+log:
+  level: "info"
+  format: "json"

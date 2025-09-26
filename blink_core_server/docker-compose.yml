@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  blink_core_server:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - REDIS_ADDR=redis:6379
+      - AI_AI_BASE_URL=http://blink_ai_server:8100
+    depends_on:
+      - redis
+    volumes:
+      - ./uploads:/root/uploads
+      - ./data:/root/data
+    networks:
+      - blink_network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - blink_network
+
+  blink_ai_server:
+    image: blink_ai_server:latest
+    ports:
+      - "8100:8100"
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - blink_network
+
+volumes:
+  redis_data:
+
+networks:
+  blink_network:
+    driver: bridge
