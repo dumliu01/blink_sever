@@ -84,7 +84,8 @@ def test_basic_functionality():
     
     try:
         # 创建测试图像
-        test_img = create_test_image()
+       # test_img = create_test_image()
+        test_img = cv2.imread("test_images/test_face.jpg")
         test_path = "test_images/test_face.jpg"
         
         # 确保目录存在
@@ -92,8 +93,8 @@ def test_basic_functionality():
         os.makedirs("output", exist_ok=True)
         
         # 保存测试图像
-        cv2.imwrite(test_path, test_img)
-        print(f"✅ 创建测试图像: {test_path}")
+        #cv2.imwrite(test_path, test_img)
+        #print(f"✅ 创建测试图像: {test_path}")
         
         # 测试人脸检测
         from face_detection import FaceDetector
