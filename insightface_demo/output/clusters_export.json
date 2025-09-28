@@ -1,0 +1,241 @@
+{
+  "export_info": {
+    "export_time": "2025-09-28T15:12:04.208554",
+    "total_faces": 14,
+    "total_clusters": 5,
+    "noise_faces": 0
+  },
+  "statistics": {
+    "total_faces": 14,
+    "total_clusters": 5,
+    "noise_faces": 0,
+    "cluster_distribution": [
+      {
+        "cluster_id": 3,
+        "face_count": 4,
+        "avg_quality": 0.7593513260769169
+      },
+      {
+        "cluster_id": 2,
+        "face_count": 4,
+        "avg_quality": 0.6897431873602753
+      },
+      {
+        "cluster_id": 4,
+        "face_count": 2,
+        "avg_quality": 0.7549871310666507
+      },
+      {
+        "cluster_id": 1,
+        "face_count": 2,
+        "avg_quality": 0.8061970012890367
+      },
+      {
+        "cluster_id": 0,
+        "face_count": 2,
+        "avg_quality": 0.7577637090758178
+      }
+    ],
+    "quality_stats": {
+      "avg_quality": 0.7453052669008413,
+      "min_quality": 0.6897431873602753,
+      "max_quality": 0.8061970012890367,
+      "avg_confidence": 0.8364945650100708
+    }
+  },
+  "clusters": [
+    {
+      "cluster_id": 0,
+      "faces": [
+        {
+          "image_path": "test_images/person2_2.jpg",
+          "bbox": [
+            549.0037841796875,
+            411.80902099609375,
+            861.69677734375,
+            837.2549438476562
+          ],
+          "confidence": 0.8003404140472412,
+          "quality_score": 0.7577637090758178,
+          "created_at": "2025-09-28 07:11:28"
+        },
+        {
+          "image_path": "test_images/person2_2.jpg",
+          "bbox": [
+            549.0037841796875,
+            411.80902099609375,
+            861.69677734375,
+            837.2549438476562
+          ],
+          "confidence": 0.8003404140472412,
+          "quality_score": 0.7577637090758178,
+          "created_at": "2025-09-28 07:11:42"
+        }
+      ]
+    },
+    {
+      "cluster_id": 1,
+      "faces": [
+        {
+          "image_path": "test_images/person2_3.jpg",
+          "bbox": [
+            450.34466552734375,
+            325.98602294921875,
+            756.7545776367188,
+            749.0029296875
+          ],
+          "confidence": 0.8527388572692871,
+          "quality_score": 0.8061970012890367,
+          "created_at": "2025-09-28 07:11:28"
+        },
+        {
+          "image_path": "test_images/person2_3.jpg",
+          "bbox": [
+            450.34466552734375,
+            325.98602294921875,
+            756.7545776367188,
+            749.0029296875
+          ],
+          "confidence": 0.8527388572692871,
+          "quality_score": 0.8061970012890367,
+          "created_at": "2025-09-28 07:11:42"
+        }
+      ]
+    },
+    {
+      "cluster_id": 2,
+      "faces": [
+        {
+          "image_path": "test_images/person2_1.jpg",
+          "bbox": [
+            708.6651000976562,
+            730.5889892578125,
+            779.9542236328125,
+            825.6133422851562
+          ],
+          "confidence": 0.8748176097869873,
+          "quality_score": 0.6897431873602753,
+          "created_at": "2025-09-28 07:11:29"
+        },
+        {
+          "image_path": "test_images/test_face.jpg",
+          "bbox": [
+            708.6651000976562,
+            730.5889892578125,
+            779.9542236328125,
+            825.6133422851562
+          ],
+          "confidence": 0.8748176097869873,
+          "quality_score": 0.6897431873602753,
+          "created_at": "2025-09-28 07:11:30"
+        },
+        {
+          "image_path": "test_images/person2_1.jpg",
+          "bbox": [
+            708.6651000976562,
+            730.5889892578125,
+            779.9542236328125,
+            825.6133422851562
+          ],
+          "confidence": 0.8748176097869873,
+          "quality_score": 0.6897431873602753,
+          "created_at": "2025-09-28 07:11:43"
+        },
+        {
+          "image_path": "test_images/test_face.jpg",
+          "bbox": [
+            708.6651000976562,
+            730.5889892578125,
+            779.9542236328125,
+            825.6133422851562
+          ],
+          "confidence": 0.8748176097869873,
+          "quality_score": 0.6897431873602753,
+          "created_at": "2025-09-28 07:11:44"
+        }
+      ]
+    },
+    {
+      "cluster_id": 3,
+      "faces": [
+        {
+          "image_path": "test_images/person2_1.jpg",
+          "bbox": [
+            405.8505554199219,
+            423.2664794921875,
+            731.1289672851562,
+            801.3951416015625
+          ],
+          "confidence": 0.7950429916381836,
+          "quality_score": 0.7593513260769169,
+          "created_at": "2025-09-28 07:11:29"
+        },
+        {
+          "image_path": "test_images/test_face.jpg",
+          "bbox": [
+            405.8505554199219,
+            423.2664794921875,
+            731.1289672851562,
+            801.3951416015625
+          ],
+          "confidence": 0.7950429916381836,
+          "quality_score": 0.7593513260769169,
+          "created_at": "2025-09-28 07:11:30"
+        },
+        {
+          "image_path": "test_images/person2_1.jpg",
+          "bbox": [
+            405.8505554199219,
+            423.2664794921875,
+            731.1289672851562,
+            801.3951416015625
+          ],
+          "confidence": 0.7950429916381836,
+          "quality_score": 0.7593513260769169,
+          "created_at": "2025-09-28 07:11:43"
+        },
+        {
+          "image_path": "test_images/test_face.jpg",
+          "bbox": [
+            405.8505554199219,
+            423.2664794921875,
+            731.1289672851562,
+            801.3951416015625
+          ],
+          "confidence": 0.7950429916381836,
+          "quality_score": 0.7593513260769169,
+          "created_at": "2025-09-28 07:11:44"
+        }
+      ]
+    },
+    {
+      "cluster_id": 4,
+      "faces": [
+        {
+          "image_path": "test_images/person1_1.jpg",
+          "bbox": [
+            1162.3668212890625,
+            1333.112060546875,
+            1544.82275390625,
+            1811.5589599609375
+          ],
+          "confidence": 0.8626614809036255,
+          "quality_score": 0.7549871310666507,
+          "created_at": "2025-09-28 07:11:29"
+        },
+        {
+          "image_path": "test_images/person1_1.jpg",
+          "bbox": [
+            1162.3668212890625,
+            1333.112060546875,
+            1544.82275390625,
+            1811.5589599609375
+          ],
+          "confidence": 0.8626614809036255,
+          "quality_score": 0.7549871310666507,
+          "created_at": "2025-09-28 07:11:43"
+        }
+      ]
+    }
+  ]
+}
