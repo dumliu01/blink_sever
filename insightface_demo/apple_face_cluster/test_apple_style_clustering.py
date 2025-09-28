@@ -19,7 +19,7 @@ def test_basic_functionality():
     clusterer = AppleStyleFaceClusterer(db_path='test_clustering.db')
     
     # 检查测试图像
-    test_dir = "test_images"
+    test_dir = "../test_images"
     if not os.path.exists(test_dir):
         print(f"❌ 测试目录 {test_dir} 不存在")
         return False
@@ -116,7 +116,7 @@ def test_similarity_search():
     # 查找测试图像
     test_images = []
     for ext in ['.jpg', '.jpeg', '.png']:
-        test_images.extend(Path('test_images').glob(f'*{ext}'))
+        test_images.extend(Path('../test_images').glob(f'*{ext}'))
     
     if not test_images:
         print("❌ 没有找到测试图像")
@@ -207,7 +207,7 @@ def performance_benchmark():
         print(f"  处理速度: {result['total_faces']/clustering_time:.1f} 人脸/秒")
         
         # 测试搜索性能
-        test_images = list(Path('test_images').glob('*.jpg'))[:3]
+        test_images = list(Path('../test_images').glob('*.jpg'))[:3]
         search_times = []
         
         for img_path in test_images:
@@ -248,7 +248,7 @@ def main():
     print("=" * 50)
     
     # 检查测试环境
-    if not os.path.exists("test_images"):
+    if not os.path.exists("../test_images"):
         print("❌ 请确保 test_images 目录存在并包含测试图像")
         return
     

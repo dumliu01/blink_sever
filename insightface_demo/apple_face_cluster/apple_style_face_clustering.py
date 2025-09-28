@@ -52,9 +52,9 @@ class AppleStyleFaceClusterer:
         self.face_detector = None
         self.face_recognizer = None
         
-        # 聚类参数
+        # 聚类参数 - 改进的参数设置
         self.clustering_params = {
-            'dbscan': {'eps': 0.35, 'min_samples': 2},
+            'dbscan': {'eps': 0.25, 'min_samples': 2},  # 降低eps，提高相似度阈值
             'kmeans': {'n_clusters': 5},
             'hierarchical': {'n_clusters': 5, 'linkage': 'average'}
         }
@@ -396,32 +396,33 @@ class AppleStyleFaceClusterer:
             
             print(f"📊 处理 {len(embeddings)} 个人脸特征")
             
-            # 标准化特征向量
-            scaler = StandardScaler()
-            embeddings_scaled = scaler.fit_transform(embeddings)
-            
-            # 执行聚类
+            # 对于DBSCAN，使用原始特征向量（InsightFace特征已经是标准化的）
+            # 对于其他算法，仍然使用标准化
             if algorithm.lower() == 'dbscan':
                 params = {**self.clustering_params['dbscan'], **kwargs}
                 clustering = DBSCAN(eps=params['eps'], min_samples=params['min_samples'], metric='cosine')
-                cluster_labels = clustering.fit_predict(embeddings_scaled)
-                
-            elif algorithm.lower() == 'kmeans':
-                params = {**self.clustering_params['kmeans'], **kwargs}
-                clustering = KMeans(n_clusters=params['n_clusters'], random_state=42, n_init=10)
-                cluster_labels = clustering.fit_predict(embeddings_scaled)
-                
-            elif algorithm.lower() == 'hierarchical':
-                params = {**self.clustering_params['hierarchical'], **kwargs}
-                clustering = AgglomerativeClustering(
-                    n_clusters=params['n_clusters'], 
-                    metric='cosine', 
-                    linkage=params['linkage']
-                )
-                cluster_labels = clustering.fit_predict(embeddings_scaled)
-                
+                cluster_labels = clustering.fit_predict(embeddings)
             else:
-                raise ValueError(f"不支持的聚类算法: {algorithm}")
+                # 标准化特征向量
+                scaler = StandardScaler()
+                embeddings_scaled = scaler.fit_transform(embeddings)
+                
+                if algorithm.lower() == 'kmeans':
+                    params = {**self.clustering_params['kmeans'], **kwargs}
+                    clustering = KMeans(n_clusters=params['n_clusters'], random_state=42, n_init=10)
+                    cluster_labels = clustering.fit_predict(embeddings_scaled)
+                    
+                elif algorithm.lower() == 'hierarchical':
+                    params = {**self.clustering_params['hierarchical'], **kwargs}
+                    clustering = AgglomerativeClustering(
+                        n_clusters=params['n_clusters'], 
+                        metric='cosine', 
+                        linkage=params['linkage']
+                    )
+                    cluster_labels = clustering.fit_predict(embeddings_scaled)
+                    
+                else:
+                    raise ValueError(f"不支持的聚类算法: {algorithm}")
             
             # 组织聚类结果
             clusters = {}
