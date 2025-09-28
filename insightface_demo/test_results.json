@@ -1,0 +1,75 @@
+{
+  "face_detection": {
+    "success": true,
+    "total_images": 5,
+    "detected_images": 4,
+    "total_faces": 9,
+    "avg_confidence": 0.8181406060854594,
+    "processing_time": 1.5490570068359375,
+    "errors": []
+  },
+  "face_recognition": {
+    "success": true,
+    "registration_success": 4,
+    "recognition_success": 4,
+    "total_images": 5,
+    "processing_time": 3.175194025039673,
+    "errors": []
+  },
+  "face_clustering": {
+    "success": true,
+    "added_faces": 9,
+    "clustering_success": true,
+    "total_clusters": 2,
+    "processing_time": 1.5344676971435547,
+    "errors": []
+  },
+  "face_attributes": {
+    "success": true,
+    "analyzed_images": 4,
+    "total_faces": 9,
+    "avg_age": 25.555555555555557,
+    "gender_distribution": {
+      "男": 5,
+      "女": 4
+    },
+    "emotion_distribution": {
+      "开心": 9
+    },
+    "processing_time": 1.3947038650512695,
+    "errors": []
+  },
+  "face_quality": {
+    "success": true,
+    "assessed_images": 4,
+    "avg_quality_score": 0.0,
+    "quality_distribution": {
+      "优秀": 0,
+      "良好": 0,
+      "一般": 0,
+      "差": 4
+    },
+    "common_issues": {
+      "人脸角度不佳": 4
+    },
+    "processing_time": 1.3777878284454346,
+    "errors": []
+  },
+  "face_liveness": {
+    "success": true,
+    "detected_images": 4,
+    "live_count": 4,
+    "spoof_count": 0,
+    "avg_confidence": 0.40208097169648443,
+    "spoof_types": {},
+    "processing_time": 3.884943962097168,
+    "errors": []
+  },
+  "summary": {
+    "total_tests": 5,
+    "successful_tests": 6,
+    "failed_tests": 0,
+    "total_time": 15.046369791030884,
+    "success_rate": 1.0
+  }
+}
