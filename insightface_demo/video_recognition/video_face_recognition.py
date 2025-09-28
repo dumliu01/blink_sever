@@ -21,7 +21,6 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from face_recognition import FaceRecognizer
 
-
 class VideoFaceRecognizer:
     """视频人脸识别器"""
     
@@ -64,7 +63,8 @@ class VideoFaceRecognizer:
         self.performance_stats = {
             'fps': 0,
             'avg_processing_time': 0,
-            'last_frame_time': 0
+            'last_frame_time': 0,
+            'recognition_times': []
         }
         
         print(f"✓ 视频人脸识别器初始化完成")
