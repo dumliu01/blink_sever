@@ -14,6 +14,14 @@ tflite-runtime>=2.13.0
 openvino>=2023.2.0
 openvino-dev>=2023.2.0
 
+# NCNN (需要手动安装NCNN工具)
+# 请从 https://github.com/Tencent/ncnn 下载并编译NCNN
+# 确保 onnx2ncnn, ncnnoptimize, ncnn2table, ncnn2int8 工具在PATH中
+
+# MNN (需要手动安装MNN工具)
+# 请从 https://github.com/alibaba/MNN 下载并编译MNN
+# 确保 MNNConverter, MNNQuantizer 工具在PATH中
+
 # 图像处理
 opencv-python>=4.8.0
 Pillow>=9.5.0

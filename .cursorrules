@@ -1,0 +1,2 @@
+blink_ai_server 项目是python工程，使用conda的blink环境运行
+blink_core_server 项目是go工程

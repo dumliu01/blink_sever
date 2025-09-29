@@ -18,6 +18,8 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from quantize_onnx import ONNXQuantizer
 from quantize_tflite import TFLiteQuantizer
 from quantize_openvino import OpenVINOQuantizer
+from quantize_ncnn import NCNNQuantizer
+from quantize_mnn import MNNQuantizer
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -34,6 +36,8 @@ class UnifiedQuantizer:
         (self.output_dir / "onnx").mkdir(exist_ok=True)
         (self.output_dir / "tflite").mkdir(exist_ok=True)
         (self.output_dir / "openvino").mkdir(exist_ok=True)
+        (self.output_dir / "ncnn").mkdir(exist_ok=True)
+        (self.output_dir / "mnn").mkdir(exist_ok=True)
         
         # 初始化各量化器
         self.onnx_quantizer = ONNXQuantizer(str(self.output_dir / "onnx"))
@@ -44,6 +48,18 @@ class UnifiedQuantizer:
         except ImportError:
             logger.warning("OpenVINO 未安装，跳过 OpenVINO 量化")
             self.openvino_quantizer = None
+        
+        try:
+            self.ncnn_quantizer = NCNNQuantizer(str(self.output_dir / "ncnn"))
+        except Exception as e:
+            logger.warning(f"NCNN 量化器初始化失败: {e}")
+            self.ncnn_quantizer = None
+        
+        try:
+            self.mnn_quantizer = MNNQuantizer(str(self.output_dir / "mnn"))
+        except Exception as e:
+            logger.warning(f"MNN 量化器初始化失败: {e}")
+            self.mnn_quantizer = None
     
     def create_calibration_images(self, num_images: int = 100) -> str:
         """创建校准图像"""
@@ -80,6 +96,10 @@ class UnifiedQuantizer:
             quantization_types = ["onnx", "tflite"]
             if self.openvino_quantizer is not None:
                 quantization_types.append("openvino")
+            if self.ncnn_quantizer is not None:
+                quantization_types.append("ncnn")
+            if self.mnn_quantizer is not None:
+                quantization_types.append("mnn")
         
         results = {}
         calib_dir = None
@@ -117,6 +137,26 @@ class UnifiedQuantizer:
             except Exception as e:
                 logger.error(f"OpenVINO 量化失败: {e}")
                 results["openvino"] = {"error": str(e)}
+        
+        # NCNN 量化
+        if "ncnn" in quantization_types and self.ncnn_quantizer is not None:
+            logger.info("=== 开始 NCNN 量化 ===")
+            try:
+                ncnn_results = self.quantize_ncnn(model_name, calib_dir, benchmark)
+                results["ncnn"] = ncnn_results
+            except Exception as e:
+                logger.error(f"NCNN 量化失败: {e}")
+                results["ncnn"] = {"error": str(e)}
+        
+        # MNN 量化
+        if "mnn" in quantization_types and self.mnn_quantizer is not None:
+            logger.info("=== 开始 MNN 量化 ===")
+            try:
+                mnn_results = self.quantize_mnn(model_name, calib_dir, benchmark)
+                results["mnn"] = mnn_results
+            except Exception as e:
+                logger.error(f"MNN 量化失败: {e}")
+                results["mnn"] = {"error": str(e)}
         
         return results
     
@@ -243,6 +283,94 @@ class UnifiedQuantizer:
             "time_taken": end_time - start_time
         }
     
+    def quantize_ncnn(self, model_name: str, calib_dir: str, benchmark: bool) -> Dict[str, Any]:
+        """NCNN 量化"""
+        start_time = time.time()
+        
+        # 首先需要ONNX模型
+        onnx_path = self.onnx_quantizer.convert_insightface_to_onnx(model_name)
+        
+        # 使用NCNN量化器
+        ncnn_results = self.ncnn_quantizer.quantize_insightface_model(
+            onnx_path, model_name, calib_dir
+        )
+        
+        if not ncnn_results.get("success", False):
+            raise Exception(f"NCNN量化失败: {ncnn_results.get('error', '未知错误')}")
+        
+        # 性能测试
+        benchmark_results = {}
+        if benchmark:
+            if "int8_param" in ncnn_results and "int8_bin" in ncnn_results:
+                benchmark_results["int8"] = self.ncnn_quantizer.benchmark_model(
+                    ncnn_results["int8_param"], ncnn_results["int8_bin"]
+                )
+            if "optimized_param" in ncnn_results and "optimized_bin" in ncnn_results:
+                benchmark_results["optimized"] = self.ncnn_quantizer.benchmark_model(
+                    ncnn_results["optimized_param"], ncnn_results["optimized_bin"]
+                )
+        
+        # 模型大小对比
+        size_comparison = {}
+        if "int8_param" in ncnn_results and "int8_bin" in ncnn_results:
+            if "optimized_param" in ncnn_results and "optimized_bin" in ncnn_results:
+                size_comparison["int8"] = self.ncnn_quantizer.compare_models(
+                    ncnn_results["optimized_param"], ncnn_results["optimized_bin"],
+                    ncnn_results["int8_param"], ncnn_results["int8_bin"]
+                )
+        
+        end_time = time.time()
+        
+        return {
+            **ncnn_results,
+            "benchmark": benchmark_results,
+            "size_comparison": size_comparison,
+            "time_taken": end_time - start_time
+        }
+    
+    def quantize_mnn(self, model_name: str, calib_dir: str, benchmark: bool) -> Dict[str, Any]:
+        """MNN 量化"""
+        start_time = time.time()
+        
+        # 首先需要ONNX模型
+        onnx_path = self.onnx_quantizer.convert_insightface_to_onnx(model_name)
+        
+        # 使用MNN量化器
+        mnn_results = self.mnn_quantizer.quantize_insightface_model(
+            onnx_path, model_name, calib_dir
+        )
+        
+        if not mnn_results.get("success", False):
+            raise Exception(f"MNN量化失败: {mnn_results.get('error', '未知错误')}")
+        
+        # 性能测试
+        benchmark_results = {}
+        if benchmark:
+            if "int8_mnn" in mnn_results:
+                benchmark_results["int8"] = self.mnn_quantizer.benchmark_model(
+                    mnn_results["int8_mnn"]
+                )
+            if "original_mnn" in mnn_results:
+                benchmark_results["original"] = self.mnn_quantizer.benchmark_model(
+                    mnn_results["original_mnn"]
+                )
+        
+        # 模型大小对比
+        size_comparison = {}
+        if "int8_mnn" in mnn_results and "original_mnn" in mnn_results:
+            size_comparison["int8"] = self.mnn_quantizer.compare_models(
+                mnn_results["original_mnn"], mnn_results["int8_mnn"]
+            )
+        
+        end_time = time.time()
+        
+        return {
+            **mnn_results,
+            "benchmark": benchmark_results,
+            "size_comparison": size_comparison,
+            "time_taken": end_time - start_time
+        }
+    
     def generate_report(self, results: Dict[str, Any]) -> str:
         """生成量化报告"""
         report = []
@@ -316,7 +444,7 @@ def main():
     parser.add_argument('--model_name', type=str, default='buffalo_l', 
                        help='InsightFace 模型名称')
     parser.add_argument('--formats', nargs='+', 
-                       choices=['onnx', 'tflite', 'openvino'], 
+                       choices=['onnx', 'tflite', 'openvino', 'ncnn', 'mnn'], 
                        default=['onnx', 'tflite'],
                        help='量化格式')
     parser.add_argument('--output_dir', type=str, default='models',
