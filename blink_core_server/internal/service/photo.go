@@ -2,7 +2,6 @@ package service
 
 import (
 	"blink_core_server/internal/database"
-	"blink_core_server/pkg/redis"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -14,6 +13,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -139,7 +139,7 @@ func (s *PhotoService) GetPhoto(userID, photoID uint) (*database.Photo, error) {
 	// 先检查缓存
 	ctx := context.Background()
 	cacheKey := fmt.Sprintf("photo:%d", photoID)
-	if cached, err := s.rdb.Get(ctx, cacheKey); err == nil {
+	if cached, err := s.rdb.Get(ctx, cacheKey).Result(); err == nil {
 		if err := json.Unmarshal([]byte(cached), &photo); err == nil {
 			if photo.UserID == userID {
 				return &photo, nil

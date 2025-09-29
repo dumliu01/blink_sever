@@ -1,0 +1,5 @@
+# insightface量化
+
+帮忙在blink_ai_server项目中增加一个insightface量化功能，用于将insightface模型进行量化，提供给ios和android使用，提高模型的推理速度。
+
+你先分析insightface量化方案，然后写一份insightface量化方案，然后再实现。

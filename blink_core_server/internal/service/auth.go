@@ -2,12 +2,12 @@ package service
 
 import (
 	"blink_core_server/internal/database"
-	"blink_core_server/pkg/redis"
 	"context"
 	"errors"
 	"fmt"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -125,7 +125,7 @@ func (s *AuthService) RefreshToken(tokenString string) (string, error) {
 	// 检查令牌是否在黑名单中
 	ctx := context.Background()
 	blacklistKey := fmt.Sprintf("blacklist:%s", tokenString)
-	exists, err := s.rdb.Exists(ctx, blacklistKey)
+	exists, err := s.rdb.Exists(ctx, blacklistKey).Result()
 	if err == nil && exists > 0 {
 		return "", errors.New("token is blacklisted")
 	}
@@ -166,7 +166,7 @@ func (s *AuthService) Logout(tokenString string) error {
 
 	expiration := time.Until(time.Unix(int64(exp), 0))
 	if expiration > 0 {
-		return s.rdb.Set(ctx, blacklistKey, "1", expiration)
+		return s.rdb.Set(ctx, blacklistKey, "1", expiration).Err()
 	}
 
 	return nil

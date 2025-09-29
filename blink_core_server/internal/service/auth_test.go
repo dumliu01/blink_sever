@@ -2,9 +2,9 @@ package service
 
 import (
 	"blink_core_server/internal/database"
-	"blink_core_server/pkg/redis"
 	"testing"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -18,7 +18,11 @@ func setupTestDB() *gorm.DB {
 
 func setupTestRedis() *redis.Client {
 	// 使用内存Redis进行测试
-	client, _ := redis.New("localhost:6379", "", 0)
+	client := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
 	return client
 }
 

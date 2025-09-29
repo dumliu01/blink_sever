@@ -21,7 +21,13 @@ from io import BytesIO
 import hashlib
 from sklearn.decomposition import PCA
 
+# 导入量化功能
+from quantization_api import router as quantization_router
+
 app = FastAPI(title="人脸识别聚类服务", version="1.0.0")
+
+# 注册量化功能路由
+app.include_router(quantization_router)
 
 # 全局变量
 face_model = None
